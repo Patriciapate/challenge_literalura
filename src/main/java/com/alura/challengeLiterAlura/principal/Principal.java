@@ -103,14 +103,12 @@ public class Principal implements CommandLineRunner {
         Integer nascimento = autorJson.optInt("birth_year");
         Integer falecimento = autorJson.optInt("death_year");
 
-        // Verifica se autor já existe
         Autor autor = autorRepository.findByNome(nomeAutor);
         if (autor == null) {
             autor = new Autor(nomeAutor, nascimento, falecimento);
             autorRepository.save(autor);
         }
 
-        // Verifica se livro já existe
         Livro livroExistente = livroRepository.findByTitulo(titulo);
 
         if (livroExistente != null) {
@@ -124,7 +122,6 @@ public class Principal implements CommandLineRunner {
         Livro livro = new Livro(titulo, idioma, downloads, autor);
         livroRepository.save(livro);
 
-        // MOSTRAR NA TELA
         System.out.println("\n----- LIVRO SALVO -----");
         System.out.println("Título: " + titulo);
         System.out.println("Autor: " + nomeAutor);
