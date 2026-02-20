@@ -13,7 +13,8 @@ public class Livro {
     private String idioma;
     private Double numeroDownloads;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "autor_id")
     private Autor autor;
 
     public Livro() {}
@@ -29,40 +30,39 @@ public class Livro {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getTitulo() {
         return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
     }
 
     public String getIdioma() {
         return idioma;
     }
 
-    public void setIdioma(String idioma) {
-        this.idioma = idioma;
-    }
-
     public Double getNumeroDownloads() {
         return numeroDownloads;
-    }
-
-    public void setNumeroDownloads(Double numeroDownloads) {
-        this.numeroDownloads = numeroDownloads;
     }
 
     public Autor getAutor() {
         return autor;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setIdioma(String idioma) {
+        this.idioma = idioma;
+    }
+
+    public void setNumeroDownloads(Double numeroDownloads) {
+        this.numeroDownloads = numeroDownloads;
+    }
+
     public void setAutor(Autor autor) {
         this.autor = autor;
     }
-
 }

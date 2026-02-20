@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -84,8 +86,6 @@ public class Principal implements CommandLineRunner {
         JSONObject obj = new JSONObject(json);
         JSONArray resultados = obj.getJSONArray("results");
 
-
-        // QUANDO SE DIGITA ALGO EX: "DOM CASMURRO" SEM NENHUMA OPÇÃO, DA UM ERRO ERNOME!!!
         if (resultados.length() == 0) {
             System.out.println("Livro não encontrado!");
             return;
@@ -103,16 +103,34 @@ public class Principal implements CommandLineRunner {
         Integer nascimento = autorJson.optInt("birth_year");
         Integer falecimento = autorJson.optInt("death_year");
 
+        // Verifica se autor já existe
         Autor autor = autorRepository.findByNome(nomeAutor);
         if (autor == null) {
             autor = new Autor(nomeAutor, nascimento, falecimento);
             autorRepository.save(autor);
         }
 
+        // Verifica se livro já existe
+        Livro livroExistente = livroRepository.findByTitulo(titulo);
+
+        if (livroExistente != null) {
+            System.out.println("\nLivro já existe no banco:");
+            System.out.println("Título: " + livroExistente.getTitulo());
+            System.out.println("Autor: " + livroExistente.getAutor().getNome());
+            System.out.println();
+            return;
+        }
+
         Livro livro = new Livro(titulo, idioma, downloads, autor);
         livroRepository.save(livro);
 
-        System.out.println("Livro salvo com sucesso!");
+        // MOSTRAR NA TELA
+        System.out.println("\n----- LIVRO SALVO -----");
+        System.out.println("Título: " + titulo);
+        System.out.println("Autor: " + nomeAutor);
+        System.out.println("Idioma: " + idioma);
+        System.out.println("Downloads: " + downloads);
+        System.out.println("-----------------------\n");
     }
 
     private void listarLivros() {
@@ -133,6 +151,7 @@ public class Principal implements CommandLineRunner {
         });
     }
 
+    @Transactional
     private void listarAutores() {
         List<Autor> autores = autorRepository.findAll();
 
@@ -145,15 +164,22 @@ public class Principal implements CommandLineRunner {
             System.out.println("Autor: " + a.getNome());
             System.out.println("Ano de nascimento: " + a.getAnoNascimento());
             System.out.println("Ano de falecimento: " + a.getAnoFalecimento());
-            System.out.println("Livros: " +
-                    a.getLivros().stream().map(Livro::getTitulo).toList());
+
+            System.out.println("Livros:");
+            a.getLivros().forEach(l ->
+                    System.out.println(" - " + l.getTitulo())
+            );
+
             System.out.println();
         });
     }
 
+    @Transactional
     private void listarAutoresVivos() {
+
         System.out.println("Insira o ano que deseja pesquisar:");
         int ano = scanner.nextInt();
+        scanner.nextLine();
 
         List<Autor> autores = autorRepository.autoresVivosNoAno(ano);
 
@@ -166,8 +192,12 @@ public class Principal implements CommandLineRunner {
             System.out.println("Autor: " + a.getNome());
             System.out.println("Ano de nascimento: " + a.getAnoNascimento());
             System.out.println("Ano de falecimento: " + a.getAnoFalecimento());
-            System.out.println("Livros: " +
-                    a.getLivros().stream().map(Livro::getTitulo).toList());
+
+            System.out.println("Livros:");
+            a.getLivros().forEach(l ->
+                    System.out.println(" - " + l.getTitulo())
+            );
+
             System.out.println();
         });
     }

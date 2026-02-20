@@ -11,3 +11,9 @@ public class ChallengeLiterAluraApplication {
 	}
 
 }
+
+
+//ERRO AO USAR A OPÇÃO 3 E JÁ DA EXIT SOZINHO NO CONSOLE.
+//ERRO AO USAR A OPÇÃO 4 E JÁ DA EXIT SOZINHO NO CONSOLE.
+
+//1,2 E 5 OK
